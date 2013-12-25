@@ -28,6 +28,8 @@ def cset(key, val=None):
 cset('scm', 'git')
 ## the name of your application.
 cset('application', 'app')
+## 设置本地path为当前目录
+cset('local_project_path','.')
 ## the url of your application.
 cset('repository', 'git@git:app.git')
 ## the brach on scm to deploy.
@@ -84,8 +86,9 @@ def _get_current_release():
     return os.path.join(releases_path, releases[-1])
 
 source_table = {
-  'git': scm.Git,
-  'mercurial': scm.Mercurial,
+  'git':        scm.Git,
+  'mercurial':  scm.Mercurial,
+  'bzr':        scm.Bzr,
 }
 cset('source', (lambda: source_table.get(fetch('scm'))()))
 cset('revision', (lambda: fetch('source').head()))

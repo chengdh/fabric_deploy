@@ -55,7 +55,8 @@ class LocalCacheStrategy(Strategy):
     revision = fetch('revision')
 
     ## find the nearest enclosing repository.
-    local_repository = source.repository_path(os.path.realpath('.'))
+    local_project_path = fetch('local_project_path')
+    local_repository = source.repository_path(os.path.realpath(local_project_path))
 
     ## copy repository contents under the cached_path. rsync requires trailing '/' for local_dir.
     project.rsync_project(local_dir=local_repository+os.path.sep, remote_dir=cached_path, delete=True)

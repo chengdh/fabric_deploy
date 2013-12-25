@@ -112,4 +112,39 @@ class Mercurial(SCM):
       else:
         return self.repository_path(os.path.join(realpath, '..'))
 
+class Bzr(SCM):
+  def head(self):
+    return fetch('branch')
+
+  def origin(self):
+    return fetch('remote', 'origin')
+
+  def checkout(self, revision, destination, perform_fetch=True):
+    kwargs = {
+      'bzr': fetch('bzr', 'bzr'),
+      'repository': fetch('repository'),
+      'destination': destination,
+    }
+
+    execute = []
+    execute.append('(test -d %(destination)s || %(bzr)s branch %(repository)s %(destination)s)' % kwargs)
+    execute.append('cd %(destination)s' % kwargs)
+    execute.append('%(bzr)s clean-tree' % kwargs)
+    return ' && '.join(execute)
+
+  def __str__(self):
+    return "bzr"
+
+  def repository_path(self, path="."):
+    realpath = os.path.realpath(path)
+    repository = os.path.join(realpath, '.bzr')
+    if os.path.isdir(repository):
+      return realpath
+    else:
+      if realpath == os.path.sep:
+        return None
+      else:
+        return self.repository_path(os.path.join(realpath, '..'))
+
+
 # vim:set ft=python :
