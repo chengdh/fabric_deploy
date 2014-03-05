@@ -85,15 +85,16 @@ def setup_virtualenv():
 def setup_pybundle():
   with settings(warn_only=True):
     requirement = 'packages.txt'
+    """
+    if test -f %(requirement)s; then pip install --upgrade --requirement=%(requirement)s; else pip freeze --local > %(requirement)s; fi &&
+    """
     result = local("""
-      if test -f %(requirement)s; then pip install --upgrade --requirement=%(requirement)s; else pip freeze --local > %(requirement)s; fi &&
       if test \! -f %(application)s.pybundle -o %(application)s.pybundle -ot %(requirement)s; then
         pip bundle --requirement=%(requirement)s %(application)s.pybundle;
       fi
     """ % var('application', requirement=requirement))
     if result.failed:
       error('failed to create pybundle.')
-
 @task
 @roles('app', 'web')
 def upload_pybundle():
